@@ -11,4 +11,7 @@ router.post("/check/email", userController.userDatadoubleCheck);
 router.post("/check/nickname", userController.userDatadoubleCheck2);
 router.post("/check/phone", userController.userDatadoubleCheck3);
 
+// 로그인
+router.post("/login", userController.userLogin);
+
 module.exports = router;

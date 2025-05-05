@@ -15,8 +15,10 @@ const userRouter = require("./routes/userRoute");
 
 app.use(cors());
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // JSON 형태의 데이터 전달
+app.use(express.urlencoded({ extended: false })); // URL-encoded 형식의 데이터 전달 (주로 form 데이터)
+// extended: true → 중첩 객체 가능 (qs 사용: 설치 필요)
+// extended: false → 단순 key-value만 가능 (querystring 사용)
 
 app.use("/user", userRouter);
 
