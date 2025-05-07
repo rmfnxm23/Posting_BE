@@ -14,4 +14,13 @@ router.post("/check/phone", userController.userDatadoubleCheck3);
 // 로그인
 router.post("/login", userController.userLogin);
 
+// 아이디 찾기
+router.post("/find/id", userController.getUserId);
+
+// 비밀번호 찾기
+router.post("/find/pw", userController.getUserPw);
+
+// 비밀번호 변경
+router.put("/change/pw", userController.updateUserPw);
+
 module.exports = router;

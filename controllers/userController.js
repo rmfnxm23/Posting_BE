@@ -109,11 +109,127 @@ const userLogin = async (req, res) => {
 
     const payload = { id: userData.id, email: userData.email };
     // console.log(payload, "payload");
-    const token = jwt.sign(payload, SecretKey, { expiresIn: "1h" });
+    // const token = jwt.sign(payload, SecretKey, { expiresIn: "1h" }); //accesstoken
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+    console.log(accessToken);
     // console.log("token", token);
+    const refreshToken = jwt.sign(
+      { id: userData.id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "1d" }
+    );
+    // console.log(refreshToken);
+
+    // 웹 브라우저(클라이언트)에 토큰 세팅
+    // res.cookie("accessToken", accessToken);
+    // res.cookie("refreshToken", refreshToken);
+    res
+      // .cookie("refreshToken", refreshToken, {
+      //   httpOnly: true,
+      //   sameSite: "strict",
+      // })
+      // .header("Authorization", accessToken)
+      // // .send(userData);
+      .json({
+        token: { accessToken },
+        Message: "로그인 성공",
+        user: userData,
+      });
 
     // return;
-    return res.status(200).json({ token, Message: "로그인 성공" });
+    // return res
+    //   .status(200)
+    //   .json({ data: { accessToken, refreshToken }, Message: "로그인 성공" });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// 아이디 찾기
+const getUserId = async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    const userPhone = await User.findOne({ where: { phone } });
+
+    if (!phone) {
+      res.send({
+        exists: "false",
+        Message: "아이디를 찾기 위해 등록된 번호를 입력해주세요.",
+      });
+    }
+
+    if (userPhone) {
+      res.status(200).json({
+        // data: { email: userPhone.email, name: userPhone.name },
+        userPhone: userPhone,
+      });
+      console.log(userPhone.email);
+    } else {
+      res.send({
+        exists: "false",
+        Message: "일치하는 아이디가 존재하지 않습니다.",
+      });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// 비밀번호 찾기 (이메일 DB조회)
+const getUserPw = async (req, res) => {
+  try {
+    const { email } = req.body;
+    // console.log(req.body);
+
+    const userId = await User.findOne({ where: { email: req.body.email } });
+    // console.log(userId);
+    if (userId) {
+      res.status(200).json({
+        success: "true",
+        // Message: "이메일 일치",
+        userId,
+      });
+    } else {
+      res.json({
+        success: "false",
+        Message: "일치하는 아이디가 존재하지 않습니다.",
+      });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// 비밀번호 변경 (조회된 이메일의 비밀번호)
+const updateUserPw = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // console.log(req.body, "changepw1");
+
+    const hashPassword = await bcrypt.hash(req.body.password, 12);
+    // console.log(hashPassword, "changepw2"); // Promise <pending> => await 사용! => hashing 잘 됨
+    const userId = await User.update(
+      { password: hashPassword }, // 수정할 데이터
+      {
+        where: { email: req.body.email }, // 조건
+      }
+    );
+    // console.log(userId, "changepw3");
+    if (userId) {
+      res.status(200).json({
+        success: "true",
+        // Message: "이메일 일치",
+        userId,
+      });
+    } else {
+      res.json({
+        success: "false",
+        Message: "비밀번호 변경에 실패하셨습니다.",
+      });
+    }
   } catch (err) {
     console.error(err);
   }
@@ -125,4 +241,7 @@ module.exports = {
   userDatadoubleCheck2,
   userDatadoubleCheck3,
   userLogin,
+  getUserId,
+  getUserPw,
+  updateUserPw,
 };
