@@ -87,24 +87,31 @@ const userLogin = async (req, res) => {
     // console.log(process.env.JWT_SECRET_KEY, "????");
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ Message: "아이디 또는 비밀번호를 입력해주세요." });
+      return res.json({
+        success: false,
+        Message: "아이디 또는 비밀번호를 입력해주세요.",
+      });
     }
 
-    const userData = await User.findOne({ where: { email: req.body.email } });
+    // console.log(req.body.email, req.body.password);
 
+    const userData = await User.findOne({ where: { email: req.body.email } });
+    // console.log(!userData);
     if (!userData) {
       // 배열이 아니라 객체 (findOne)
-      return res
-        .status(400)
-        .json({ Message: "해당 유저가 존재하지 않습니다." });
+      return res.json({
+        success: false,
+        Message: "해당 유저가 존재하지 않습니다.",
+      });
     }
 
     const matchedPass = await bcrypt.compare(password, userData.password); // 입력한 비밀번호화 DB에 저장된 해시비밀번호 비교
     // console.log(matchedPass, "비교해봐");
     if (!matchedPass) {
-      return res.status(400).json({ Message: "비밀번호가 일치하지 않습니다." });
+      return res.json({
+        success: false,
+        Message: "비밀번호가 일치하지 않습니다.",
+      });
     }
 
     const payload = { id: userData.id, email: userData.email };
@@ -133,7 +140,7 @@ const userLogin = async (req, res) => {
       // .header("Authorization", accessToken)
       // // .send(userData);
       .json({
-        token: { accessToken },
+        token: accessToken,
         Message: "로그인 성공",
         user: userData,
       });
