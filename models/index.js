@@ -29,6 +29,14 @@ console.log(db, "객체니?");
 //   }
 // });
 
+// js는 single 스레드라 순차적으로 읽기 때문에 각각의 파일에 관계를 설정할 경우 연결이 제대로 되지 않는다. index에 작성해야 읽을 수 있음.
+db.Category.hasMany(db.Post, { foreignKey: "categoryId" });
+db.Post.belongsTo(db.Category, { foreignKey: "categoryId" });
+
+db.User.hasMany(db.Post, { foreignKey: "userId", as: "user" });
+db.Post.belongsTo(db.User, { foreignKey: "userId", as: "user" });
+// as: target 모델의 별명, 이후 include 시 쿼리 결과 값의 이름으로도 사용
+
 sequelize
   .sync({ force: false })
   .then(() => {

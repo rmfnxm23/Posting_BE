@@ -1,4 +1,4 @@
-const { Post } = require("../models");
+const { Post, Category, User } = require("../models");
 
 // 게시글 작성
 const postRegister = async (req, res) => {
@@ -37,11 +37,19 @@ const getPostOne = async (req, res) => {
     const Postdata = await Post.findOne({
       where: { id: req.params.id },
       include: [
-        // {
-        //   model: "Category",
-        //   as: "categoryId",
-        //   attributes: ["id", "category"], // select할 컬럼 선택
-        // },
+        {
+          model: Category, // 데이터를 가져올 모델명
+          attributes: ["id", "category"], // 가져올 칼럼 // 카테고리: 카테고리명을 표시하기 위해 불러옴
+        },
+        {
+          model: User,
+          as: "user", // 프론트로 데이터를 보낼 때의 쿼리 명으로 사용됨
+          // 예를 들어, 프론트의 데이터를 콘솔로 찍어보면 u: {id: 넘버, nickname: "닉네임"} 의 형태.
+          // as가 설정되어 있지 않으면 model명이 결과 값의 이름이 된다.
+          // 사용시, 관계 정의에서도 설정해야 함.
+
+          attributes: ["id", "nickname"], // 가져올 칼럼 // 작성자: 닉네임으로 표시하기 위해 불러옴
+        },
       ],
     });
 

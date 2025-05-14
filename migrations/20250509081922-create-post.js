@@ -29,9 +29,19 @@ module.exports = {
       },
       categoryId: {
         type: Sequelize.INTEGER(11),
+        references: {
+          model: "Category",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       userId: {
         type: Sequelize.INTEGER(11),
+        references: {
+          model: "user",
+          key: "nickname",
+        },
       },
     });
   },

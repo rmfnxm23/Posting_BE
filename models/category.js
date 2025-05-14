@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(db) {
       // define association here
-      db.Category.hasMany(db.Post, {
-        // 여러개의 post 테이블과 연동
-        foreignKey: "categoryId",
-        targetKey: "posts",
-      });
+      // db.Category.hasMany(db.Post, {
+      //   // 여러개의 post 테이블과 연동
+      //   foreignKey: "categoryId",
+      //   // targetKey: "posts",
+      // });
     }
   }
   category.init(
