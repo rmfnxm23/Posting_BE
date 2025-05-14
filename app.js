@@ -12,6 +12,8 @@ const app = express();
 const port = 5000;
 
 const userRouter = require("./routes/userRoute");
+const postRouter = require("./routes/postRoute");
+const categoryRouter = require("./routes/categoryRoute");
 
 // 브라우저에서 다른 도메인의 서버로 요청할대만 cors발생
 // app.use(cors()); // -> 모든 요청에 다
@@ -30,6 +32,11 @@ app.use(express.urlencoded({ extended: false })); // URL-encoded 형식의 데�
 
 // (중요) express.json()과 express.urlencoded()가 route를 설정 코드 위에 있어야 함
 app.use("/user", userRouter);
+app.use("/post", postRouter);
+app.use("/category", categoryRouter);
+// app.use("/category",async (req,res)=>{
+//   await Category.findAll()
+// })
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

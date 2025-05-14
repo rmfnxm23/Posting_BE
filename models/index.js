@@ -18,6 +18,16 @@ db.Sequelize = Sequelize;
 
 // db.User = require("./user");
 db.User = require("./user")(sequelize, Sequelize); // sequelize 인스턴스 Sequelize 클래스를 불러와야 User의 함수를 사용할 수 있다.
+db.Category = require("./category")(sequelize, Sequelize);
+db.Post = require("./post")(sequelize, Sequelize);
+
+console.log(db, "객체니?");
+
+// Object.keys(db).forEach((Post) => {
+//   if (db(Post).associate) {
+//     db(Post).associate(db);
+//   }
+// });
 
 sequelize
   .sync({ force: false })
